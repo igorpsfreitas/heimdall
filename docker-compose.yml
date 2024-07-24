@@ -1,0 +1,56 @@
+services:
+  database:
+    image: postgres:16
+    container_name: heimdall_database
+    ports:
+      - 5132:5432
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=HubADM
+      - POSTGRES_PASSWORD=2024_HUB!ADM
+      - POSTGRES_DB=heimdall
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - backend_network
+  
+  backend:
+    build: ./backend
+    command: python manage.py runserver 0.0.0.0:3232
+    container_name: heimdall_backend
+    environment:
+      - DB_NAME=heimdall
+      - DB_USER=HubADM
+      - DB_PASSWORD=2024_HUB!ADM
+      - DB_HOST=database
+      - DB_PORT=5432
+    ports:
+      - 3232:3232
+    restart: unless-stopped
+    volumes:
+      - ./backend:/backend
+    networks:
+      - backend_network
+    depends_on:
+      - database
+  
+  frontend:
+    build: ./frontend
+    command: npm start
+    container_name: heimdall_frontend
+    environment:
+      - PORT=8000
+      - WDS_SOCKET_HOST=127.0.0.1
+    ports:
+      - 8000:8000
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/frontend
+      - /frontend/node_modules
+  
+volumes:
+  postgres_data:
+
+networks:
+    backend_network:
+      internal: true
