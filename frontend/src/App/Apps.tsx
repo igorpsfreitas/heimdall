@@ -1,8 +1,22 @@
-import React from 'react';
+import React, {
+  useEffect
+} from 'react';
 import logo from '../logo.svg';
 import './App.css';
+import { getProducts } from '../API/projectServices';
 
 function Apps() {
+  
+  // Teste de chamada de API
+  useEffect(() => {
+    const fetchData = async () => {
+      const products = await getProducts();
+      console.log(products);
+    };
+    fetchData();
+  }, []);
+
+
   return (
     <div className="App">
       <header className="App-header">
