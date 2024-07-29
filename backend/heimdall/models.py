@@ -1,13 +1,44 @@
-from django.db import models
+# backend/heimdall/models.py
 
-class User(models.Model):
-    name = models.CharField(max_length=255)
-    pwd = models.CharField(max_length=255)
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.hashers import make_password, check_password
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None, **extra_fields):
+        if not username:
+            raise ValueError('The Username field must be set')
+        user = self.model(username=username, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(username, password, **extra_fields)
+
+class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=255, unique=True)
+    password = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Check if the user instance is new
+            self.password = make_password(self.password)
+        super(User, self).save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
-    
+        return self.username
+
 class Project(models.Model):
     STATUS_CHOICES = [
         ('in_progress', 'in_progress'), # em andamento
@@ -17,7 +48,7 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     started = models.DateField()
     finished = models.DateField(null=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Em andamento')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='in_progress')
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_projects')
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,7 +73,7 @@ class Holder(models.Model):
 
 class Patrimony(models.Model):
     STATUS_CHOICES = [
-        ('avalilable', 'avaliavle'), # disponível
+        ('available', 'available'), # disponível
         ('unavailable', 'unavailable'), # indisponível
         ('dead', 'dead'), # inoperante
     ]
@@ -54,11 +85,11 @@ class Patrimony(models.Model):
     observation = models.TextField(null=True)
     holder_id = models.ForeignKey(Holder, on_delete=models.CASCADE, null=True)
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Disponível')
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='available')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_patrimonies')
-    create_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_patrimonies')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_patrimonies')
 
     def __str__(self):
         return self.name

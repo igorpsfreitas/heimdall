@@ -22,8 +22,8 @@ from django.urls import path, include
 # )
 
 urlpatterns = [
-    #path('admin/', admin.site.urls),
-    path('', include('heimdall.urls')),
+    path('admin/', admin.site.urls),
+    path('api/', include('heimdall.urls')),
     #path('', include('patrimonio.urls')),
     #path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     #path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

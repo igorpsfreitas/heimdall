@@ -1,26 +1,37 @@
 import React from 'react';
-import logo from '../logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
+import { ChakraProvider } from '@chakra-ui/react';
+import { AuthProvider } from '../context/AuthContext';
+import Layout from '../Components/Layout';
+import Home from '../Pages/Home';
+import Project from '../Pages/Project';
+import Login from '../Pages/Login';
+import ProtectedRoute from '../Components/ProtectedRoute';
+import { HelmetProvider } from 'react-helmet-async';
 
-function Apps() {
+function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+        <AuthProvider>
+          <HelmetProvider>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Layout />
+                  </ProtectedRoute>
+                }>
+                <Route index element={<Home />} />
+                <Route path="projects" element={<Project />} />
+              </Route>
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </HelmetProvider>
+        </AuthProvider>
+    </ChakraProvider>
   );
 }
 
-export default Apps;
+export default App;

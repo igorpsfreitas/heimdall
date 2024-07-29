@@ -3,7 +3,7 @@ services:
     image: postgres:16
     container_name: heimdall_database
     ports:
-      - 5132:5432
+      - 5432:5432
     restart: unless-stopped
     environment:
       - POSTGRES_USER=HubADM
@@ -11,8 +11,6 @@ services:
       - POSTGRES_DB=heimdall
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    networks:
-      - backend_network
   
   backend:
     build: ./backend
@@ -29,9 +27,9 @@ services:
     restart: unless-stopped
     volumes:
       - ./backend:/backend
-    networks:
-      - backend_network
     depends_on:
+      - database
+    links:
       - database
   
   frontend:
@@ -50,7 +48,3 @@ services:
   
 volumes:
   postgres_data:
-
-networks:
-    backend_network:
-      internal: true
