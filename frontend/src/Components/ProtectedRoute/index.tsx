@@ -10,7 +10,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuth() as AuthData;
   console.log(isAuthenticated);
     useEffect(() => {
-      console.log(isAuthenticated);
     }, []);
   if (!isAuthenticated) {
     return <Navigate to="/login" />;

@@ -1,18 +1,54 @@
-import React from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { Button, Box } from '@chakra-ui/react';
-
+import { login } from './components/fuctions';
+import { useState } from 'react';// Import the useState hook
+import {
+  Button,
+  Box,
+  Card,
+  CardBody,
+  CardFooter,
+  Spacer,
+  FormControl,
+  FormLabel,
+  Input,
+  Image,
+} from '@chakra-ui/react';
+import HeaderBar from '../../Components/HeaderBar';
+import { Helmet } from 'react-helmet-async';
 
 export default function Login() {
-  const { login } = useAuth() as { login: () => void };
+  const [username, setUsername] = useState(''); 
+  const [password, setPassword] = useState(''); 
   
   const handleLogin = () => {
-    login();
+    login(username, password);
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-      <Button onClick={handleLogin} colorScheme="teal">Login</Button>
-    </Box>
+    <>
+      <Helmet>
+        <title>Heimdall - Login</title>
+      </Helmet>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgGradient="linear(to-r, teal.500, blue.500)">
+        <HeaderBar />
+        <Card boxShadow="dark-lg">
+          <CardBody>
+            <Box display="flex" alignItems="center" justifyContent="center">
+              <Image src="imgs/logo.png" alt="Logo" h="50px" />
+            </Box>
+            <FormControl id="login" isRequired>
+              <FormLabel>Login:</FormLabel>
+              <Input id="username" type="text" placeholder='Digite o nome de usuário...' value={username} onChange={(e) => setUsername(e.target.value)} />
+              <FormLabel>Senha:</FormLabel>
+              <Input id="password" type="password" placeholder='Digite a senha...' value={password} onChange={(e) => setPassword(e.target.value)} />
+            </FormControl>
+          </CardBody>
+          <CardFooter display="flex" justifyContent="flex-end">
+            <Button onClick={handleLogin} colorScheme="yellow">Consultar</Button>
+            <Spacer />
+            <Button onClick={handleLogin} colorScheme="teal">Login</Button>
+          </CardFooter>
+        </Card>
+      </Box>
+    </>
   );
 };

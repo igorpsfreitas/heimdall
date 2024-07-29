@@ -1,14 +1,13 @@
 import React from 'react';
-import { Box, Flex } from '@chakra-ui/react';
-import { Outlet, Link } from 'react-router-dom';
-import TopBar from '../TopBar';
-import LeftBar from '../LeftBar';
+import {Flex } from '@chakra-ui/react';
+import HeaderBar from '../HeaderBar';
+import SideBar from '../SideBar';
 
 const Layout = () => {
   return (
     <Flex direction="column" h="100vh">
-      <TopBar />
-      <LeftBar />
+      <HeaderBar />
+      <SideBar />
     </Flex>
   );
 };
