@@ -1,5 +1,6 @@
 env_mac
 sql/
+node_modules/
 __pycache__/
 .DS_Store
 backend/heimdall/migrations/0001_initial.py
