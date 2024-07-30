@@ -11,6 +11,7 @@ import {
   FormLabel,
   Input,
   Image,
+  useToast,
 } from '@chakra-ui/react';
 import HeaderBar from '../../Components/HeaderBar';
 import { Helmet } from 'react-helmet-async';
@@ -18,9 +19,17 @@ import { Helmet } from 'react-helmet-async';
 export default function Login() {
   const [username, setUsername] = useState(''); 
   const [password, setPassword] = useState(''); 
-  
+  const toast = useToast();
   const handleLogin = () => {
-    login(username, password);
+    login(username, password)
+      .then(() => {
+        toast({
+          title: 'Erro ao ao efetuar o login!',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      })
   };
 
   return (
