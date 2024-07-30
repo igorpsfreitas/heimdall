@@ -1,5 +1,5 @@
-import { login } from './components/fuctions';
-import { useState } from 'react';// Import the useState hook
+import { login } from '../../hooks/authUtils';
+import { useState } from 'react';
 import {
   Button,
   Box,
@@ -28,7 +28,7 @@ export default function Login() {
       <Helmet>
         <title>Heimdall - Login</title>
       </Helmet>
-      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgGradient="linear(to-r, teal.500, blue.500)">
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh" bgGradient="linear(to-r, purple.500, blue.500)">
         <HeaderBar />
         <Card boxShadow="dark-lg">
           <CardBody>
@@ -51,9 +51,9 @@ export default function Login() {
             </FormControl>
           </CardBody>
           <CardFooter display="flex" justifyContent="flex-end">
-            <Button onClick={handleLogin} colorScheme="yellow">Consultar</Button>
+            <Button onClick={handleLogin} colorScheme="purple">Consultar</Button>
             <Spacer />
-            <Button onClick={handleLogin} colorScheme="teal">Login</Button>
+            <Button onClick={handleLogin} colorScheme="blue">Login</Button>
           </CardFooter>
         </Card>
       </Box>

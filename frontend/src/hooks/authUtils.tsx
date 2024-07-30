@@ -1,6 +1,26 @@
 import axios from 'axios';
 const baseURL = process.env.REACT_APP_API;
 
+export const getTokenFromLocalStorage = () => {
+  return localStorage.getItem("access_token");
+}
+
+export const removeAllFromLocalStorage = () => {
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+  localStorage.removeItem("isAuthenticated");
+  localStorage.removeItem("username");
+}
+
+export const logout = () => {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('isAuthenticated');
+  window.location.href = '/login';
+};
+
+
 export const login = async (username: string, password: string) => {
     try {
       const response = await axios.post(`${baseURL}/token/`, { username, password });
@@ -13,11 +33,3 @@ export const login = async (username: string, password: string) => {
       console.log('Login error', error);
     }
   };
-
-export const logout = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  localStorage.removeItem('username');
-  localStorage.removeItem('isAuthenticated');
-  window.location.href = '/login'; // Redirect to the login page
-};
