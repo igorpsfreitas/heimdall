@@ -37,9 +37,17 @@ export default function Login() {
             </Box>
             <FormControl id="login" isRequired>
               <FormLabel>Login:</FormLabel>
-              <Input id="username" type="text" placeholder='Digite o nome de usuário...' value={username} onChange={(e) => setUsername(e.target.value)} />
+              <Input id="username" type="text" placeholder='Digite o nome de usuário...' value={username} onChange={(e) => setUsername(e.target.value)} onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  document.getElementById('password')?.focus();
+                }
+              }} autoFocus={true} autoComplete="off" />
               <FormLabel>Senha:</FormLabel>
-              <Input id="password" type="password" placeholder='Digite a senha...' value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input id="password" type="password" placeholder='Digite a senha...' value={password} onChange={(e) => setPassword(e.target.value)} onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleLogin();
+                }
+              }} />
             </FormControl>
           </CardBody>
           <CardFooter display="flex" justifyContent="flex-end">
