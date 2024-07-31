@@ -15,6 +15,7 @@ export const Sidebar = ()=> {
   
         <SidebarButton name="Home" pagePath="/" isSelected={isSelected("/")} />
         <SidebarButton name="Projetos" pagePath="/projects" isSelected={isSelected("/projects")} />
+        <SidebarButton name="Bolsistas" pagePath="/holders" isSelected={isSelected("/holders")} />
 
       </Flex>
       <Box

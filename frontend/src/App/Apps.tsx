@@ -5,6 +5,7 @@ import { AuthProvider } from '../context/AuthContext';
 import PageWrapper from '../Components/PageWrapper';
 import Home from '../Pages/Home';
 import Project from '../Pages/Project';
+import Holder from '../Pages/Holder';
 import Login from '../Pages/Login';
 import ProtectedRoute from '../Components/ProtectedRoute';
 import { HelmetProvider } from 'react-helmet-async';
@@ -25,6 +26,7 @@ function App() {
                 }>
                 <Route index element={<Home />} />
                 <Route path="projects" element={<Project />} />
+                <Route path="holders" element={<Holder />} />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
