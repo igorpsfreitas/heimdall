@@ -24,14 +24,24 @@ export default function Login() {
     login(username, password)
       .then(() => {
         toast({
-          title: 'Erro ao ao efetuar o login!',
+          title: 'Erro ao efetuar o login!',
           status: 'error',
           duration: 5000,
           isClosable: true,
         });
       })
   };
-
+  const handleGuest = () => {
+    login('guest', 'guest')
+      .then(() => {
+        toast({
+          title: 'Erro ao acessar como convidado!',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+  }
   return (
     <>
       <Helmet>
@@ -60,7 +70,7 @@ export default function Login() {
             </FormControl>
           </CardBody>
           <CardFooter display="flex" justifyContent="flex-end">
-            <Button onClick={handleLogin} colorScheme="purple">Consultar</Button>
+            <Button onClick={handleGuest} colorScheme="purple">Convidado</Button>
             <Spacer />
             <Button onClick={handleLogin} colorScheme="blue">Login</Button>
           </CardFooter>
