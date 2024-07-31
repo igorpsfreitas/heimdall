@@ -32,11 +32,12 @@ export default function Project() {
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const [selectedProject, setSelectedProject] = useState<TypeProject | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [username, setUsername] = useState(localStorage.getItem('username'));
   
   useEffect(() => {
     getProjects().then((response) => {
       setData(response.data);
-      console.log("foi");
+      setUsername(localStorage.getItem('username'));
     });
   }, []);
 
@@ -96,21 +97,22 @@ export default function Project() {
       <Box>
         <Flex mb={30} justifyContent="space-between" alignItems="center">
           <Text as="b" fontSize={"40px"} color={"#5923b8"}>PROJETOS</Text>
-          <Button
+          {username !== 'guest' && (<Button
             colorScheme="green"
             rightIcon={<Icon as={AiOutlinePlus} />}
             onClick={onCreateOpen}
           >
             Novo
           </Button>
+          )}
         </Flex>
         <Box mb={4}>
-  <Input
-    placeholder="Pesquisar..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-  />
-</Box>
+          <Input
+            placeholder="Pesquisar..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Box>
         <Divider />
         <TableContainer
           w="100%"
@@ -125,8 +127,8 @@ export default function Project() {
                 <Th textAlign="center">Status</Th>
                 <Th textAlign="center">Inicio</Th>
                 <Th textAlign="center">Fim</Th>
-                <Th textAlign="center" w="5%">Editar</Th>
-                <Th textAlign="center" w="5%">Remover</Th>
+                {username !== 'guest' && <Th textAlign="center" w="5%">Editar</Th>}
+                {username !== 'guest' && <Th textAlign="center" w="5%">Remover</Th>}
               </Tr>
             </Thead>
             <Tbody>
@@ -136,16 +138,19 @@ export default function Project() {
                   <Td textAlign="center">{statusParse(project.status)}</Td>
                   <Td textAlign="center">{dateFix(project.started)}</Td>
                   <Td textAlign="center">{dateFix(project.finished)}</Td>
-                  <Td textAlign="center" w="5%">
-                    <Button
-                      variant="ghost"
-                      colorScheme="purple"
-                      onClick={() => {handleEditDialog(project)}}
-                    >
-                      <Icon as={AiOutlineEdit} name="edit" />
-                    </Button>
-                  </Td>
-                  <Td textAlign="center" w="5%">
+                  {username !== 'guest' && (
+                    <Td textAlign="center" w="5%">
+                      <Button
+                        variant="ghost"
+                        colorScheme="purple"
+                        onClick={() => {handleEditDialog(project)}}
+                      >
+                        <Icon as={AiOutlineEdit} name="edit" />
+                      </Button>
+                    </Td>
+                  )}
+                  {username !== 'guest' && (
+                    <Td textAlign="center" w="5%">
                     <Button
                       variant="ghost"
                       colorScheme="red"
@@ -154,6 +159,7 @@ export default function Project() {
                       <Icon as={AiOutlineDelete} name="delete" />
                     </Button>
                   </Td>
+                  )}
                 </Tr>)
               )}
             </Tbody>
@@ -166,7 +172,7 @@ export default function Project() {
           onClose={onClose}
           onConfirm={() => handleDelete(selectedProject.id)}
           projectName={selectedProject.name}
-          />
+        />
       )}
       <CreateProjectModal
         isOpen={isCreateOpen}
