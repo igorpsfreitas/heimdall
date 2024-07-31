@@ -14,6 +14,7 @@ import {
   Divider,
   Flex,
   useDisclosure,
+  Input,
 
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
@@ -21,13 +22,16 @@ import { getProjects, TypeProject, removeProject } from '../../API/projectServic
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
 import ConfirmDeleteDialog from './components/DeleteDialog';
 import CreateProjectModal from './components/CreateProjectModal';
+import EditProjectModal from './components/EditProjectModal';
 
 
 export default function Project() {
   const [data, setData] = useState<TypeProject[]>([]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
+  const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const [selectedProject, setSelectedProject] = useState<TypeProject | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
   useEffect(() => {
     getProjects().then((response) => {
@@ -67,6 +71,23 @@ export default function Project() {
     setData([...data, project]);
   }
 
+  const handleEditDialog = (project: TypeProject) => {
+    setSelectedProject(project);
+    onEditOpen();
+  }
+
+  const handleEditSuccess = (updatedProject: TypeProject) => {
+    setData(data.map((project) => (project.id === updatedProject.id ? updatedProject : project)));
+  }
+
+
+  const filteredData = data.filter((project) =>
+    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    statusParse(project.status).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dateFix(project.started).toLowerCase().includes(searchQuery.toLowerCase()) ||
+    dateFix(project.finished).toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <Helmet>
@@ -83,6 +104,13 @@ export default function Project() {
             Novo
           </Button>
         </Flex>
+        <Box mb={4}>
+  <Input
+    placeholder="Pesquisar..."
+    value={searchQuery}
+    onChange={(e) => setSearchQuery(e.target.value)}
+  />
+</Box>
         <Divider />
         <TableContainer
           w="100%"
@@ -102,7 +130,7 @@ export default function Project() {
               </Tr>
             </Thead>
             <Tbody>
-              {data.map((project) => (
+              {filteredData.map((project) => (
                 <Tr key={project.id}>
                   <Td textAlign="center">{project.name}</Td>
                   <Td textAlign="center">{statusParse(project.status)}</Td>
@@ -112,7 +140,7 @@ export default function Project() {
                     <Button
                       variant="ghost"
                       colorScheme="purple"
-                      onClick={() => {}}
+                      onClick={() => {handleEditDialog(project)}}
                     >
                       <Icon as={AiOutlineEdit} name="edit" />
                     </Button>
@@ -145,6 +173,14 @@ export default function Project() {
         onClose={onCreateClose}
         onSuccess={handleCreateSuccess}
       />
+      {selectedProject && (
+        <EditProjectModal
+          isOpen={isEditOpen}
+          onClose={onEditClose}
+          project={selectedProject}
+          onSuccess={handleEditSuccess}
+        />
+      )}
     </>
   );
 }

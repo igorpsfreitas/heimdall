@@ -25,3 +25,7 @@ export const removeProject = async (id: number) => {
 export const createProject = async (project: any) => {
     return await api.post("projects/", project);
 }
+
+export const updateProject = async (project: any) => {
+    return await api.put(`projects/${project.id}/`, project);
+}
