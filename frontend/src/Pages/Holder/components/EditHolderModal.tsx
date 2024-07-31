@@ -17,14 +17,14 @@ import {
 import { TypeHolder, updateHolder } from '../../../API/holderServices';
 import { TypeProject, getProjects } from '../../../API/projectServices';
 
-interface EditProjectModalProps {
+interface EditHolderModalProps {
   isOpen: boolean;
   onClose: () => void;
-  project: TypeHolder | null;
-  onSuccess: (project: TypeHolder) => void;
+  holder: TypeHolder | null;
+  onSuccess: (holder: TypeHolder) => void;
 }
 
-const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, project, onSuccess }) => {
+const EditHolderModal: React.FC<EditHolderModalProps> = ({ isOpen, onClose, holder, onSuccess }) => {
   const [name, setName] = useState('');
   const [cpf, setCPF] = useState('');
   const [email, setEmail] = useState('');
@@ -34,15 +34,15 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
   const toast = useToast();
 
   useEffect(() => {
-    if (project) {
-      setName(project.name);
-      setCPF(project.cpf);
-      setEmail(project.email);
-      setPhone(project.phone);
-      setProjectId(project.project_id);
+    if (holder) {
+      setName(holder.name);
+      setCPF(holder.cpf);
+      setEmail(holder.email);
+      setPhone(holder.phone);
+      setProjectId(holder.project_id);
       
     }
-  }, [project]);
+  }, [holder]);
 
   useEffect(() => {
     getProjects().then((response) => {
@@ -51,9 +51,9 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
   }, []);
 
   const handleUpdate = () => {
-    if (project) {
+    if (holder) {
       const updatedHolder: TypeHolder = {
-        ...project,
+        ...holder,
         name,
         cpf,
         email,
@@ -87,7 +87,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Editar Projeto</ModalHeader>
+        <ModalHeader>Editar Bolsista</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
                 <FormControl id="name" isRequired>
@@ -132,9 +132,9 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
                     value={project_id}
                     onChange={(e) => setProjectId(e.target.value)}
                   >
-                    {projects.map((project) => (
-                      <option key={project.id} value={project.id}>
-                        {project.name}
+                    {projects.map((holder) => (
+                      <option key={holder.id} value={holder.id}>
+                        {holder.name}
                       </option>
                     ))}
                   </Select>
@@ -152,4 +152,4 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
   );
 };
 
-export default EditProjectModal;
+export default EditHolderModal;

@@ -21,8 +21,8 @@ import { Helmet } from 'react-helmet-async';
 import { getHolders, TypeHolder, removeHolder} from '../../API/holderServices';
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
 import ConfirmDeleteDialog from './components/DeleteDialog';
-import CreateProjectModal from './components/CreateProjectModal';
-import EditProjectModal from './components/EditProjectModal';
+import CreateHolderModal from './components/CreateHolderModal';
+import EditHolderModal from './components/EditHolderModal';
 import { TypeProject, getProjects } from '../../API/projectServices';
 
 export default function Holder() {
@@ -55,22 +55,22 @@ export default function Holder() {
     });
   }
 
-  const handleDeleteDialog = (project: TypeHolder) => {
-    setSelectedHolder(project);
+  const handleDeleteDialog = (holder: TypeHolder) => {
+    setSelectedHolder(holder);
     onOpen();
   }
 
-  const handleCreateSuccess = (project: TypeHolder) => {
-    setData([...data, project]);
+  const handleCreateSuccess = (holder: TypeHolder) => {
+    setData([...data, holder]);
   }
 
-  const handleEditDialog = (project: TypeHolder) => {
-    setSelectedHolder(project);
+  const handleEditDialog = (holder: TypeHolder) => {
+    setSelectedHolder(holder);
     onEditOpen();
   }
 
-  const handleEditSuccess = (updatedProject: TypeHolder) => {
-    setData(data.map((project) => (project.id === updatedProject.id ? updatedProject : project)));
+  const handleEditSuccess = (updatedHolder: TypeHolder) => {
+    setData(data.map((holder) => (holder.id === updatedHolder.id ? updatedHolder : holder)));
   }
   const getProjectNameById = (id: string) => {
     const projectId = parseInt(id);
@@ -78,12 +78,12 @@ export default function Holder() {
     return project ? project.name : '';
   };
 
-  const filteredData = data.filter((project) =>
-    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.cpf.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    project.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    projects.find(p => p.id === parseInt(project.project_id))?.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredData = data.filter((holder) =>
+    holder.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    holder.cpf.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    holder.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    holder.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    projects.find(p => p.id === parseInt(holder.project_id))?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -130,20 +130,20 @@ export default function Holder() {
               </Tr>
             </Thead>
             <Tbody>
-              {filteredData.map((project) => (
-                <Tr key={project.id}>
-                  <Td textAlign="center">{project.name}</Td>
-                  {username !== 'guest' && <Td textAlign="center">{project.cpf}</Td>}
-                  <Td textAlign="center">{project.email}</Td>
-                  <Td textAlign="center">{project.phone}</Td>
-                  <Td textAlign="center">{getProjectNameById(project.project_id)}</Td>
+              {filteredData.map((holder) => (
+                <Tr key={holder.id}>
+                  <Td textAlign="center">{holder.name}</Td>
+                  {username !== 'guest' && <Td textAlign="center">{holder.cpf}</Td>}
+                  <Td textAlign="center">{holder.email}</Td>
+                  <Td textAlign="center">{holder.phone}</Td>
+                  <Td textAlign="center">{getProjectNameById(holder.project_id)}</Td>
                   {username !== 'guest' && (
                     <>
                       <Td textAlign="center" w="5%">
                         <Button
                           variant="ghost"
                           colorScheme="purple"
-                          onClick={() => { handleEditDialog(project); } }
+                          onClick={() => { handleEditDialog(holder); } }
                         >
                           <Icon as={AiOutlineEdit} name="edit" />
                         </Button>
@@ -152,7 +152,7 @@ export default function Holder() {
                         <Button
                           variant="ghost"
                           colorScheme="red"
-                          onClick={() => handleDeleteDialog(project)}
+                          onClick={() => handleDeleteDialog(holder)}
                         >
                           <Icon as={AiOutlineDelete} name="delete" />
                         </Button>
@@ -173,16 +173,16 @@ export default function Holder() {
           projectName={selectedHolder.name}
         />
       )}
-      <CreateProjectModal
+      <CreateHolderModal
         isOpen={isCreateOpen}
         onClose={onCreateClose}
         onSuccess={handleCreateSuccess}
       />
       {selectedHolder && (
-        <EditProjectModal
+        <EditHolderModal
           isOpen={isEditOpen}
           onClose={onEditClose}
-          project={selectedHolder}
+          holder={selectedHolder}
           onSuccess={handleEditSuccess}
         />
       )}
