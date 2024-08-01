@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -26,11 +26,25 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
   const [name, setName] = useState('');
   const [status, setStatus] = useState<'in_progress' | 'finished'>('in_progress');
   const [started, setStarted] = useState('');
-  const [finished, setFinished] = useState('');
+  const [finished, setFinished] = useState<string | null>(null);
   const [created_by, setCreatedBy] = useState(localStorage.getItem('user_id'));
   const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id'));
 
   const toast = useToast();
+  useEffect(() => {
+    if (finished === ""){
+      setFinished(null);
+    }
+  }
+  , [finished]);
+  useEffect(() => {
+    setName('');
+    setStatus('in_progress');
+    setStarted('');
+    setFinished('');
+    setCreatedBy(localStorage.getItem('user_id'));
+    setUpdatedBy(localStorage.getItem('user_id'));
+  } , [isOpen]);
 
   const handleSubmit = () => {
     const newProject = {
@@ -44,7 +58,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
     };
 
     createProject(newProject).then((response) => {
-      onSuccess(response.data);
+      onSuccess(response.data); 
       onClose();
       toast({
         title: "Projeto criado.",
@@ -101,12 +115,13 @@ return (
                     />
                 </FormControl>
 
-                <FormControl id="finished" isRequired mt={4}>
+                <FormControl id="finished" mt={4}>
                     <FormLabel>Data de Término</FormLabel>
                     <Input
                         type="date"
-                        value={finished}
+                        value={finished ?? ''}
                         onChange={(e) => setFinished(e.target.value)}
+                        disabled={status === 'in_progress'}
                     />
                 </FormControl>
             </ModalBody>

@@ -137,7 +137,7 @@ export default function Project() {
                   <Td textAlign="center">{project.name}</Td>
                   <Td textAlign="center">{statusParse(project.status)}</Td>
                   <Td textAlign="center">{dateFix(project.started)}</Td>
-                  <Td textAlign="center">{dateFix(project.finished)}</Td>
+                  <Td textAlign="center">{project.finished ? dateFix(project.finished) : '---'}</Td>
                   {username !== 'guest' && (
                     <Td textAlign="center" w="5%">
                       <Button
