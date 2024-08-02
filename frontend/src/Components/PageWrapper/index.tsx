@@ -1,3 +1,4 @@
+// frontend/src/Components/PageWrapper/index.tsx
 import { Box, Flex } from "@chakra-ui/react";
 import React, { useLayoutEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
@@ -25,12 +26,12 @@ export const PageWrapper = () => {
       <Flex
         direction="column"
         flex={5}
-        h="100vh"
+        h="auto"
         maxH="100vh"
         overflowX="hidden"
       >
-        <Box mt="65px" padding="8px 32px" overflowY="auto">
-          <Outlet />
+        <Box mt="65px" ml="200px" padding="8px 32px" overflowY="auto" bottom={0}>
+          <Outlet  />
         </Box>
       </Flex>
     </Flex>

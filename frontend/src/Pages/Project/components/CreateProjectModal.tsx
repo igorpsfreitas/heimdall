@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -26,11 +26,33 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
   const [name, setName] = useState('');
   const [status, setStatus] = useState<'in_progress' | 'finished'>('in_progress');
   const [started, setStarted] = useState('');
-  const [finished, setFinished] = useState('');
+  const [finished, setFinished] = useState<string | null>(null);
   const [created_by, setCreatedBy] = useState(localStorage.getItem('user_id'));
   const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id'));
 
   const toast = useToast();
+  useEffect(() => {
+    if (finished === ""){
+      setFinished(null);
+    }
+  }
+  , [finished]);
+
+  useEffect(() => {
+    if (status === 'in_progress') {
+      setFinished(null);
+    }
+  }
+  , [status]);
+  
+  useEffect(() => {
+    setName('');
+    setStatus('in_progress');
+    setStarted('');
+    setFinished('');
+    setCreatedBy(localStorage.getItem('user_id'));
+    setUpdatedBy(localStorage.getItem('user_id'));
+  } , [isOpen]);
 
   const handleSubmit = () => {
     const newProject = {
@@ -44,7 +66,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
     };
 
     createProject(newProject).then((response) => {
-      onSuccess(response.data);
+      onSuccess(response.data); 
       onClose();
       toast({
         title: "Projeto criado.",
@@ -65,60 +87,65 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
   };
 
 return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-            <ModalHeader>Criar Novo Projeto</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-                <FormControl id="name" isRequired>
-                    <FormLabel>Nome do Projeto</FormLabel>
-                    <Input
-                        placeholder="Nome do Projeto"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </FormControl>
+  <Modal isOpen={isOpen} onClose={onClose}>
+    <ModalOverlay />
+    <ModalContent>
+      <ModalHeader>Criar Novo Projeto</ModalHeader>
+      <ModalCloseButton />
+      <ModalBody>
+        <FormControl id="name" isRequired>
+          <FormLabel>Nome do Projeto</FormLabel>
+          <Input
+            placeholder="Nome do Projeto"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </FormControl>
 
-                <FormControl id="status" isRequired mt={4}>
-                    <FormLabel>Status</FormLabel>
-                    <Select
-                        placeholder="Selecione o Status"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value as 'in_progress' | 'finished')}
-                    >
-                        <option value="in_progress">Em Progresso</option>
-                        <option value="finished">Finalizado</option>
-                    </Select>
-                </FormControl>
+        <FormControl id="status" isRequired mt={4}>
+          <FormLabel>Status</FormLabel>
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'in_progress' | 'finished')}
+          >
+            <option value="in_progress">Em Progresso</option>
+            <option value="finished">Finalizado</option>
+          </Select>
+        </FormControl>
 
-                <FormControl id="started" isRequired mt={4}>
-                    <FormLabel>Data de Início</FormLabel>
-                    <Input
-                        type="date"
-                        value={started}
-                        onChange={(e) => setStarted(e.target.value)}
-                    />
-                </FormControl>
+        <FormControl id="started" isRequired mt={4}>
+          <FormLabel>Data de Início</FormLabel>
+          <Input
+            type="date"
+            value={started}
+            onChange={(e) => setStarted(e.target.value)}
+          />
+        </FormControl>
 
-                <FormControl id="finished" isRequired mt={4}>
-                    <FormLabel>Data de Término</FormLabel>
-                    <Input
-                        type="date"
-                        value={finished}
-                        onChange={(e) => setFinished(e.target.value)}
-                    />
-                </FormControl>
-            </ModalBody>
+        <FormControl id="finished" isRequired={status === 'finished'} mt={4}>
+          <FormLabel>Data de Término</FormLabel>
+          <Input
+            type="date"
+            value={finished ?? ''}
+            onChange={(e) => setFinished(e.target.value)}
+            disabled={status === 'in_progress'}
+          />
+        </FormControl>
+      </ModalBody>
 
-            <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
-                    Criar
-                </Button>
-                <Button variant="ghost" onClick={onClose}>Cancelar</Button>
-            </ModalFooter>
-        </ModalContent>
-    </Modal>
+      <ModalFooter>
+        <Button
+          colorScheme="blue"
+          mr={3}
+          onClick={handleSubmit}
+          isDisabled={!name || !started || (status === 'finished' && !finished)}
+        >
+          Criar
+        </Button>
+        <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+      </ModalFooter>
+    </ModalContent>
+  </Modal>
 );
 };
 
