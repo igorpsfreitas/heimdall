@@ -15,18 +15,18 @@ import {
   Flex,
   useDisclosure,
   Input,
-
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
 import { getProjects, TypeProject, removeProject } from '../../API/projectServices';
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
+import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai';
 import ConfirmDeleteDialog from './components/DeleteDialog';
 import CreateProjectModal from './components/CreateProjectModal';
 import EditProjectModal from './components/EditProjectModal';
 
-
 export default function Project() {
   const [data, setData] = useState<TypeProject[]>([]);
+  const [sortColumn, setSortColumn] = useState<keyof TypeProject>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
@@ -41,6 +41,13 @@ export default function Project() {
     });
   }, []);
 
+  useEffect(() => {
+    getProjects().then((response) => {
+      setData(response.data);
+      setUsername(localStorage.getItem('username'));
+    });
+  }, [onClose, onCreateClose, onEditClose]);
+
   const dateFix = (date: any) => {
     const adjustedDate = new Date(date);
     adjustedDate.setDate(adjustedDate.getDate() + 1);
@@ -54,39 +61,57 @@ export default function Project() {
     } else {
       return 'Finalizado';
     }
-  }
+  };
 
   const handleDelete = (id: number) => {
     removeProject(id).then(() => {
       setData(data.filter((item) => item.id !== id));
       onClose();
     });
-  }
+  };
 
   const handleDeleteDialog = (project: TypeProject) => {
     setSelectedProject(project);
     onOpen();
-  }
+  };
 
   const handleCreateSuccess = (project: TypeProject) => {
     setData([...data, project]);
-  }
+  };
 
   const handleEditDialog = (project: TypeProject) => {
     setSelectedProject(project);
     onEditOpen();
-  }
+  };
 
   const handleEditSuccess = (updatedProject: TypeProject) => {
     setData(data.map((project) => (project.id === updatedProject.id ? updatedProject : project)));
-  }
+  };
 
-
-  const filteredData = data.filter((project) =>
-    project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    statusParse(project.status).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dateFix(project.started).toLowerCase().includes(searchQuery.toLowerCase()) ||
-    dateFix(project.finished).toLowerCase().includes(searchQuery.toLowerCase())
+  const sortData = (data: TypeProject[]) => {
+    return data.sort((a, b) => {
+      if (sortColumn === 'started' || sortColumn === 'finished') {
+        
+        const dateA = a[sortColumn] ? new Date(a[sortColumn] as string) : new Date(0);
+        const dateB = b[sortColumn] ? new Date(b[sortColumn] as string) : new Date(0);
+        return sortOrder === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
+      } else {
+        
+        const valueA = a[sortColumn] as string || '';
+        const valueB = b[sortColumn] as string || '';
+        return sortOrder === 'asc' ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+      }
+    });
+  };
+  
+  
+  const filteredData = sortData(
+    data.filter((project) =>
+      project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      statusParse(project.status).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dateFix(project.started).toLowerCase().includes(searchQuery.toLowerCase()) ||
+      dateFix(project.finished).toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
@@ -116,17 +141,42 @@ export default function Project() {
         <Divider />
         <TableContainer
           w="100%"
-          maxH="60vh"
+          bottom={0}
           overflowX="auto"
           overflowY="auto"
+          maxH="calc(100vh - 240px)"
         >
           <Table variant="striped" colorScheme='purple'>
             <Thead position="sticky" top={0} zIndex={1} bg="white">
               <Tr>
-                <Th textAlign="center">Nome</Th>
-                <Th textAlign="center">Status</Th>
-                <Th textAlign="center">Inicio</Th>
-                <Th textAlign="center">Fim</Th>
+                <Th textAlign="center" onClick={() => {
+                  setSortColumn('name');
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                }}>
+                  Nome
+                  {sortColumn === 'name' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>
+                <Th textAlign="center" onClick={() => {
+                  setSortColumn('status');
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                }}>
+                  Status
+                  {sortColumn === 'status' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>
+                <Th textAlign="center" onClick={() => {
+                  setSortColumn('started');
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                }}>
+                  Inicio
+                  {sortColumn === 'started' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>
+                <Th textAlign="center" onClick={() => {
+                  setSortColumn('finished');
+                  setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                }}>
+                  Fim
+                  {sortColumn === 'finished' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>
                 {username !== 'guest' && <Th textAlign="center" w="5%">Editar</Th>}
                 {username !== 'guest' && <Th textAlign="center" w="5%">Remover</Th>}
               </Tr>

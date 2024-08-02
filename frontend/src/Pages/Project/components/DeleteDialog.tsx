@@ -7,6 +7,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  useToast,
 } from '@chakra-ui/react';
 
 interface ConfirmDeleteDialogProps {
@@ -23,13 +24,29 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   projectName,
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
+  const toast = useToast();
+  
+  const handleConfirm = () => {
+    toast({
+      title: "Projeto excluído!",
+      description: `O projeto "${projectName}" foi excluído com sucesso.`,
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+    });
+    onConfirm();
+  };
 
+  const handleCancel = () => {
+    onClose();
+  };
 
+  
   return (
     <AlertDialog
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
-      onClose={onClose}
+      onClose={handleCancel}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -42,10 +59,10 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button ref={cancelRef} onClick={handleCancel}>
               Cancelar
             </Button>
-            <Button colorScheme="red" onClick={onConfirm} ml={3}>
+            <Button colorScheme="red" onClick={handleConfirm} ml={3}>
               Excluir
             </Button>
           </AlertDialogFooter>

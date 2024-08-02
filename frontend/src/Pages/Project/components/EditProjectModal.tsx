@@ -27,7 +27,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
   const [name, setName] = useState('');
   const [status, setStatus] = useState<'in_progress' | 'finished'>('in_progress');
   const [started, setStarted] = useState('');
-  const [finished, setFinished] = useState('');
+  const [finished, setFinished] = useState<string | null>('');
   const toast = useToast();
 
   useEffect(() => {
@@ -38,6 +38,12 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
       setFinished(project.finished ? new Date(project.finished).toISOString().split('T')[0] : '');
     }
   }, [project]);
+  useEffect(() => {
+    if (status === 'in_progress') {
+      setFinished(null);
+    }
+  }
+  , [status]);
 
   const handleUpdate = () => {
     if (project) {
@@ -78,32 +84,39 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
         <ModalHeader>Editar Projeto</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl id="name" mb={4}>
+          <FormControl id="name" isRequired mb={4}>
             <FormLabel>Nome</FormLabel>
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </FormControl>
-          <FormControl id="status" mb={4}>
+
+          <FormControl id="status" isRequired mb={4}>
             <FormLabel>Status</FormLabel>
             <Select
-                        placeholder="Selecione o Status"
-                        value={status}
-                        onChange={(e) => setStatus(e.target.value as 'in_progress' | 'finished')}
-                    >
-                        <option value="in_progress">Em Progresso</option>
-                        <option value="finished">Finalizado</option>
-                    </Select>
+              value={status}
+              onChange={(e) => setStatus(e.target.value as 'in_progress' | 'finished')}
+            >
+              <option value="in_progress">Em Progresso</option>
+              <option value="finished">Finalizado</option>
+            </Select>
           </FormControl>
-          <FormControl id="started" mb={4}>
+
+          <FormControl id="started" isRequired mb={4}>
             <FormLabel>Início</FormLabel>
             <Input type="date" value={started} onChange={(e) => setStarted(e.target.value)} />
           </FormControl>
-          <FormControl id="finished" mb={4}>
+
+          <FormControl id="finished" isRequired={status === 'finished'} mb={4}>
             <FormLabel>Fim</FormLabel>
-            <Input type="date" value={finished} onChange={(e) => setFinished(e.target.value)} />
+            <Input type="date" value={finished ?? ''} onChange={(e) => setFinished(e.target.value)} disabled={status === 'in_progress'} isRequired={status === 'in_progress'}/>
           </FormControl>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={handleUpdate}
+            isDisabled={!name || !started || (status === 'finished' && !finished)}
+          >
             Atualizar
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>

@@ -1,3 +1,4 @@
+// frontend/src/Components/HeaderBar/index.tsx
 import {
   Box,
   Flex,
