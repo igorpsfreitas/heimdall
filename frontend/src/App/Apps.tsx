@@ -2,9 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { AuthProvider } from '../context/AuthContext';
-import Layout from '../Components/Layout';
-import Home from '../Pages/Home';
+import PageWrapper from '../Components/PageWrapper';
+import History from '../Pages/History';
 import Project from '../Pages/Project';
+import Holder from '../Pages/Holder';
 import Login from '../Pages/Login';
 import ProtectedRoute from '../Components/ProtectedRoute';
 import { HelmetProvider } from 'react-helmet-async';
@@ -20,11 +21,12 @@ function App() {
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <Layout />
+                    <PageWrapper />
                   </ProtectedRoute>
                 }>
-                <Route index element={<Home />} />
+                <Route index element={<History />} />
                 <Route path="projects" element={<Project />} />
+                <Route path="holders" element={<Holder />} />
               </Route>
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

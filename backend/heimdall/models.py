@@ -59,9 +59,9 @@ class Project(models.Model):
 
 class Holder(models.Model):
     name = models.CharField(max_length=255)
-    cpf = models.CharField(max_length=11, unique=True)
+    cpf = models.CharField(max_length=30, unique=True)
     email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20)
+    phone = models.CharField(max_length=30)
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_holders')
