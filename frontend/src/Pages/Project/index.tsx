@@ -44,7 +44,6 @@ export default function Project() {
   useEffect(() => {
     getProjects().then((response) => {
       setData(response.data);
-      setUsername(localStorage.getItem('username'));
     });
   }, [onClose, onCreateClose, onEditClose]);
 

@@ -142,7 +142,12 @@ const EditHolderModal: React.FC<EditHolderModalProps> = ({ isOpen, onClose, hold
 
             </ModalBody>
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleUpdate}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={handleUpdate}
+            isDisabled={!name || !cpf || !email || !phone || !project_id}
+          >
             Atualizar
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>

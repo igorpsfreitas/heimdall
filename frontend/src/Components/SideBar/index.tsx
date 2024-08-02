@@ -24,7 +24,7 @@ export const Sidebar = () => {
       bottom={0}
     >
       <VStack spacing={4} align="start">
-        <SidebarButton name="Home" pagePath="/" isSelected={isSelected("/")} />
+        <SidebarButton name="Histórico" pagePath="/history" isSelected={isSelected("/history")} />
         <SidebarButton name="Projetos" pagePath="/projects" isSelected={isSelected("/projects")} />
         <SidebarButton name="Bolsistas" pagePath="/holders" isSelected={isSelected("/holders")} />
       </VStack>

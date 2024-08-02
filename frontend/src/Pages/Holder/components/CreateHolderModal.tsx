@@ -34,12 +34,22 @@ const CreateHolderModal: React.FC<CreateHolderModalProps> = ({ isOpen, onClose, 
   const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id'));
   const [projects, setProjects] = useState<TypeProject[]>([]);
 
+  const toast = useToast();
   useEffect(() => {
     getProjects().then((response) => {
       setProjects(response.data);
     });
   }, []);
-  const toast = useToast();
+
+  useEffect(() => {
+    setName('');
+    setCPF('');
+    setEmail('');
+    setPhone('');
+    setProjectId('');
+    setCreatedBy(localStorage.getItem('user_id'));
+    setUpdatedBy(localStorage.getItem('user_id'));
+  }, [isOpen]);
 
   const handleSubmit = () => {
     const newHolder = {
@@ -74,6 +84,47 @@ const CreateHolderModal: React.FC<CreateHolderModalProps> = ({ isOpen, onClose, 
     });
   };
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove tudo que não for número
+    value = value.replace(/\D/g, '');
+
+    // Formata o número conforme necessário
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
+    } else if (value.length > 5) {
+      value = value.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
+    } else if (value.length > 2) {
+      value = value.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+    } else {
+      value = value.replace(/^(\d*)/, '($1');
+    }
+    return value;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhone(formatPhoneNumber(e.target.value));
+  };
+
+  const formatCPF = (value: string) => {
+    // Remove tudo que não for número
+    value = value.replace(/\D/g, '');
+
+    // Formata o CPF conforme necessário
+    if (value.length > 9) {
+      value = value.replace(/^(\d{3})(\d{3})(\d{3})(\d{2}).*/, '$1.$2.$3-$4');
+    } else if (value.length > 6) {
+      value = value.replace(/^(\d{3})(\d{3})(\d{0,3}).*/, '$1.$2.$3');
+    } else if (value.length > 3) {
+      value = value.replace(/^(\d{3})(\d{0,3})/, '$1.$2');
+    }
+
+    return value;
+  };
+
+  const handleCPFChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCPF(formatCPF(e.target.value));
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -95,7 +146,7 @@ const CreateHolderModal: React.FC<CreateHolderModalProps> = ({ isOpen, onClose, 
             <Input
               placeholder="CPF"
               value={cpf}
-              onChange={(e) => setCPF(e.target.value)}
+              onChange={handleCPFChange}
             />
           </FormControl>
 
@@ -113,7 +164,7 @@ const CreateHolderModal: React.FC<CreateHolderModalProps> = ({ isOpen, onClose, 
             <Input
               placeholder="Telefone"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
             />
           </FormControl>
           <FormControl id="project" isRequired>
@@ -134,7 +185,12 @@ const CreateHolderModal: React.FC<CreateHolderModalProps> = ({ isOpen, onClose, 
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            onClick={handleSubmit}
+            isDisabled={!name || !cpf || !email || !phone || !project_id}
+          >
             Criar
           </Button>
           <Button variant="ghost" onClick={onClose}>Cancelar</Button>

@@ -5,12 +5,12 @@ import {
  } from '@chakra-ui/react';
  import { Helmet } from 'react-helmet-async';
 
-export default function Home() {
+export default function History() {
   
   return (
     <>
       <Helmet>
-        <title>Heimdall - Home</title>
+        <title>Heimdall - Histórico</title>
       </Helmet>
       <Box>
         <Text>Home</Text>

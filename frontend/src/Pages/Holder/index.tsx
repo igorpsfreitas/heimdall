@@ -15,11 +15,10 @@ import {
   Flex,
   useDisclosure,
   Input,
-
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
-import { getHolders, TypeHolder, removeHolder} from '../../API/holderServices';
-import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus } from 'react-icons/ai';
+import { getHolders, TypeHolder, removeHolder } from '../../API/holderServices';
+import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai';
 import ConfirmDeleteDialog from './components/DeleteDialog';
 import CreateHolderModal from './components/CreateHolderModal';
 import EditHolderModal from './components/EditHolderModal';
@@ -27,6 +26,8 @@ import { TypeProject, getProjects } from '../../API/projectServices';
 
 export default function Holder() {
   const [data, setData] = useState<TypeHolder[]>([]);
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'ascending' | 'descending' } | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
@@ -34,7 +35,8 @@ export default function Holder() {
   const [searchQuery, setSearchQuery] = useState('');
   const [username, setUsername] = useState(localStorage.getItem('username'));
   const [projects, setProjects] = useState<TypeProject[]>([]);
-  
+  const [sortColumn, setSortColumn] = useState<keyof TypeHolder>('name');
+
   useEffect(() => {
     getHolders().then((response) => {
       setData(response.data);
@@ -46,7 +48,7 @@ export default function Holder() {
     getProjects().then((response) => {
       setProjects(response.data);
     });
-  }, []);
+  }, [onClose, onCreateClose, onEditClose]);
 
   const handleDelete = (id: number) => {
     removeHolder(id).then(() => {
@@ -72,6 +74,7 @@ export default function Holder() {
   const handleEditSuccess = (updatedHolder: TypeHolder) => {
     setData(data.map((holder) => (holder.id === updatedHolder.id ? updatedHolder : holder)));
   }
+
   const getProjectNameById = (id: string) => {
     const projectId = parseInt(id);
     const project = projects.find(p => p.id === projectId);
@@ -85,6 +88,32 @@ export default function Holder() {
     holder.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
     projects.find(p => p.id === parseInt(holder.project_id))?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const sortedData = React.useMemo(() => {
+    let sortableData = [...filteredData];
+    if (sortConfig !== null) {
+      sortableData.sort((a, b) => {
+        if ((a as any)[sortConfig.key] < (b as any)[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if ((a as any)[sortConfig.key] > (b as any)[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableData;
+  }, [filteredData, sortConfig]);
+
+  const requestSort = (key: string) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+    setSortOrder(direction === 'ascending' ? 'asc' : 'desc');
+    setSortColumn(key as keyof TypeHolder);
+  };
 
   return (
     <>
@@ -120,17 +149,36 @@ export default function Holder() {
           <Table variant="striped" colorScheme='purple'>
             <Thead position="sticky" top={0} zIndex={1} bg="white">
               <Tr>
-                <Th textAlign="center">Nome</Th>
-                {username !== 'guest' && <Th textAlign="center">CPF</Th>}
-                <Th textAlign="center">E-mail</Th>
-                <Th textAlign="center">Telefone</Th>
-                <Th textAlign="center">Projeto</Th>
-                {username !== 'guest' && <Th textAlign="center" w="5%">Editar</Th>}
-                {username !== 'guest' && <Th textAlign="center" w="5%">Remover</Th>}
+                <Th textAlign="center" onClick={() => requestSort('name')}>
+                  Nome
+                  {sortColumn === 'name' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>
+                {username !== 'guest' && <Th textAlign="center" onClick={() => requestSort('cpf')}>
+                  CPF
+                {sortColumn === 'cpf' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                </Th>}
+                <Th textAlign="center" onClick={() => requestSort('email')}>
+                  E-mail
+                  {sortColumn === 'email' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                  </Th>
+                <Th textAlign="center" onClick={() => requestSort('phone')}>
+                  Telefone
+                  {sortColumn === 'phone' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                  </Th>
+                <Th textAlign="center" onClick={() => requestSort('project_id')}>
+                  Projeto
+                  {sortColumn === 'project_id' && (sortOrder === 'asc' ? <Icon as={AiOutlineArrowUp} /> : <Icon as={AiOutlineArrowDown} />)}
+                  </Th>
+                {username !== 'guest' && <Th textAlign="center" w="5%">
+                  Editar
+                  </Th>}
+                {username !== 'guest' && <Th textAlign="center" w="5%">
+                  Remover                  
+                  </Th>}
               </Tr>
             </Thead>
             <Tbody>
-              {filteredData.map((holder) => (
+              {sortedData.map((holder) => (
                 <Tr key={holder.id}>
                   <Td textAlign="center">{holder.name}</Td>
                   {username !== 'guest' && <Td textAlign="center">{holder.cpf}</Td>}

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-do
 import { ChakraProvider } from '@chakra-ui/react';
 import { AuthProvider } from '../context/AuthContext';
 import PageWrapper from '../Components/PageWrapper';
-import Home from '../Pages/Home';
+import History from '../Pages/History';
 import Project from '../Pages/Project';
 import Holder from '../Pages/Holder';
 import Login from '../Pages/Login';
@@ -24,7 +24,7 @@ function App() {
                     <PageWrapper />
                   </ProtectedRoute>
                 }>
-                <Route index element={<Home />} />
+                <Route index element={<History />} />
                 <Route path="projects" element={<Project />} />
                 <Route path="holders" element={<Holder />} />
               </Route>
