@@ -189,8 +189,9 @@ export default function Project() {
                   <Td textAlign="center">{dateFix(project.started)}</Td>
                   <Td textAlign="center">{project.finished ? dateFix(project.finished) : '---'}</Td>
                   {username !== 'guest' && (
-                    <Td textAlign="center" w="5%">
+                    <Td textAlign="center" w="5%" padding={0}>
                       <Button
+                        padding={0}
                         variant="ghost"
                         colorScheme="purple"
                         onClick={() => {handleEditDialog(project)}}
@@ -200,8 +201,9 @@ export default function Project() {
                     </Td>
                   )}
                   {username !== 'guest' && (
-                    <Td textAlign="center" w="5%">
+                    <Td textAlign="center" w="5%" padding={0}>
                     <Button
+                      padding={0}
                       variant="ghost"
                       colorScheme="red"
                       onClick={() => handleDeleteDialog(project)}
