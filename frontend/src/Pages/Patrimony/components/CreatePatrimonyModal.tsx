@@ -30,7 +30,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
   const [serialNumber, setSerialNumber] = useState('');
   const [description, setDescription] = useState('');
   const [observation, setObservation] = useState('');
-  const [status, setStatus] = useState<'avaliable' | 'unavailable' | 'dead'>('avaliable');
+  const [status, setStatus] = useState<'available' | 'unavailable' | 'dead'>('available');
   const [created_by, setCreatedBy] = useState(localStorage.getItem('user_id'));
   const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id'));
   const [holder_id, setHolderId] = useState<number | null>(null);
@@ -55,7 +55,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
     setSerialNumber('');
     setDescription('');
     setObservation('');
-    setStatus('avaliable');
+    setStatus('available');
     setCreatedBy(localStorage.getItem('user_id'));
     setUpdatedBy(localStorage.getItem('user_id'));
     setHolderId(null);
@@ -122,7 +122,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
             />
           </FormControl>
 
-          <FormControl id="serial_number" isRequired mt={4}>
+          <FormControl id="serial_number" mt={4}>
             <FormLabel>Número de Série</FormLabel>
             <Input
               placeholder="Número de Série"
@@ -140,24 +140,38 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
             />
           </FormControl>
 
-          <FormControl id="observation" mt={4}>
+          {/* <FormControl id="observation" mt={4}>
             <FormLabel>Observação</FormLabel>
             <Input
               placeholder="Observação"
               value={observation}
               onChange={(e) => setObservation(e.target.value)}
             />
-          </FormControl>
+          </FormControl> */}
 
           <FormControl id="status" isRequired mt={4}>
             <FormLabel>Status</FormLabel>
             <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value as 'avaliable' | 'unavailable' | 'dead')}
+              onChange={(e) => setStatus(e.target.value as 'available' | 'unavailable' | 'dead')}
             >
-              <option value="avaliable">Disponível</option>
+              <option value="available">Disponível</option>
               <option value="unavailable">Indisponível</option>
               <option value="dead">Baixado</option>
+            </Select>
+          </FormControl>
+          <FormControl id="project_id" isRequired mt={4}>
+            <FormLabel>Projeto</FormLabel>
+            <Select
+              value={project_id || ''}
+              onChange={(e) => setProjectId(e.target.value ? parseInt(e.target.value) : null)}
+            >
+              <option value="">Nenhum</option>
+              {projects.map((project) => (
+                <option key={project.id} value={project.id}>
+                  {project.name}
+                </option>
+              ))}
             </Select>
           </FormControl>
 

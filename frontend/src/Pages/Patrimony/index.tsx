@@ -32,7 +32,7 @@ export default function Patrimony() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
-  const [selectedProject, setSelectedProject] = useState<TypePatrimony | null>(null);
+  const [selectedPatrimony, setSelectedPatrimony] = useState<TypePatrimony | null>(null);
   const [selectedHolder, setSelectedHolder] = useState<TypeHolder | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [username, setUsername] = useState(localStorage.getItem('username'));
@@ -74,7 +74,7 @@ export default function Patrimony() {
   };
 
   const handleDeleteDialog = (patrimony: TypePatrimony) => {
-    setSelectedProject(patrimony);
+    setSelectedPatrimony(patrimony);
     onOpen();
   };
 
@@ -83,12 +83,12 @@ export default function Patrimony() {
   };
 
   const handleEditDialog = (patrimony: TypePatrimony) => {
-    setSelectedProject(patrimony);
+    setSelectedPatrimony(patrimony);
     onEditOpen();
   };
  // Compare this snippet from frontend/src/Pages/Patrimony/index.tsx:
   const handleEditSuccess = (updatedPatrimony: TypePatrimony) => {
-    setData(data.map((project) => (project.id === updatedPatrimony.id ? updatedProject : project)));
+    setData(data.map((patrimony) => (patrimony.id === updatedPatrimony.id ? updatedPatrimony : patrimony)));
   };
 
   return (
@@ -222,28 +222,25 @@ export default function Patrimony() {
           </Table>
         </TableContainer>
       </Box>
-      {selectedProject && (
+      {selectedPatrimony && (
         <ConfirmDeleteDialog
           isOpen={isOpen}
           onClose={onClose}
-          onConfirm={() => handleDelete(selectedProject.id)}
-          projectName={selectedProject.name}
+          onConfirm={() => handleDelete(selectedPatrimony.id)}
+          projectName={selectedPatrimony.name}
         />
       )}
       <CreatePatrimonyModal
         isOpen={isCreateOpen}
         onClose={onCreateClose}
         onSuccess={handleCreateSuccess}
-        project={selectedProject as TypeProject}
-        holder={selectedHolder as TypeHolder}
-        onSuccess={handleEditSuccess as (project: TypePatrimony) => void}
       />
-        <EditProjectModal
+        {/* <EditProjectModal
         isOpen={isEditOpen}
         onClose={onEditClose}
         project={selectedProject}
         onSuccess={handleEditSuccess}
-      />
+      /> */}
       
     </>
   );
