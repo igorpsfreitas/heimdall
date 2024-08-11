@@ -18,9 +18,11 @@ import {
 } from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
 import { getPatrimonies, TypePatrimony, removePatrimony } from '../../API/patrimonyServices';
+import { TypeProject } from '../../API/projectServices';
+import { TypeHolder } from '../../API/holderServices';
 import { AiOutlineDelete, AiOutlineEdit, AiOutlinePlus, AiOutlineArrowUp, AiOutlineArrowDown } from 'react-icons/ai';
 import ConfirmDeleteDialog from './components/DeleteDialog';
-import CreateProjectModal from './components/CreateProjectModal';
+import CreatePatrimonyModal from './components/CreatePatrimonyModal';
 import EditProjectModal from './components/EditProjectModal';
 
 export default function Patrimony() {
@@ -31,6 +33,7 @@ export default function Patrimony() {
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const [selectedProject, setSelectedProject] = useState<TypePatrimony | null>(null);
+  const [selectedHolder, setSelectedHolder] = useState<TypeHolder | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [username, setUsername] = useState(localStorage.getItem('username'));
 
@@ -55,12 +58,13 @@ export default function Patrimony() {
   };
 
   const statusParse = (status: string) => {
-    if (status === 'in_progress') {
-      return 'Em progresso';
-    } else {
-      return 'Finalizado';
+    if (status === 'avaliable') {
+      return 'Disponível';
+    } else if (status === 'unavaliable') {
+      return 'Indisponível';
     }
-  };
+    return 'Baixado';
+  }
 
   const handleDelete = (id: number) => {
     removePatrimony(id).then(() => {
@@ -69,22 +73,22 @@ export default function Patrimony() {
     });
   };
 
-  const handleDeleteDialog = (project: TypePatrimony) => {
-    setSelectedProject(project);
+  const handleDeleteDialog = (patrimony: TypePatrimony) => {
+    setSelectedProject(patrimony);
     onOpen();
   };
 
-  const handleCreateSuccess = (project: TypePatrimony) => {
-    setData([...data, project]);
+  const handleCreateSuccess = (patrimony: TypePatrimony) => {
+    setData([...data, patrimony]);
   };
 
-  const handleEditDialog = (project: TypePatrimony) => {
-    setSelectedProject(project);
+  const handleEditDialog = (patrimony: TypePatrimony) => {
+    setSelectedProject(patrimony);
     onEditOpen();
   };
-
-  const handleEditSuccess = (updatedProject: TypePatrimony) => {
-    setData(data.map((project) => (project.id === updatedProject.id ? updatedProject : project)));
+ // Compare this snippet from frontend/src/Pages/Patrimony/index.tsx:
+  const handleEditSuccess = (updatedPatrimony: TypePatrimony) => {
+    setData(data.map((project) => (project.id === updatedPatrimony.id ? updatedProject : project)));
   };
 
   return (
@@ -226,11 +230,12 @@ export default function Patrimony() {
           projectName={selectedProject.name}
         />
       )}
-      {/* <CreateProjectModal
+      <CreatePatrimonyModal
         isOpen={isCreateOpen}
         onClose={onCreateClose}
         onSuccess={handleCreateSuccess}
         project={selectedProject as TypeProject}
+        holder={selectedHolder as TypeHolder}
         onSuccess={handleEditSuccess as (project: TypePatrimony) => void}
       />
         <EditProjectModal
@@ -238,7 +243,7 @@ export default function Patrimony() {
         onClose={onEditClose}
         project={selectedProject}
         onSuccess={handleEditSuccess}
-      /> */}
+      />
       
     </>
   );
