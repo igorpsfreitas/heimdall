@@ -9,6 +9,7 @@ import Holder from '../Pages/Holder';
 import Login from '../Pages/Login';
 import ProtectedRoute from '../Components/ProtectedRoute';
 import { HelmetProvider } from 'react-helmet-async';
+import Patrimony from '../Pages/Patrimony';
 
 function App() {
   return (
@@ -24,11 +25,13 @@ function App() {
                     <PageWrapper />
                   </ProtectedRoute>
                 }>
-                <Route index element={<History />} />
+                <Route path="/" element={<Navigate to="history" />} />
+                <Route path='history'index element={<History />} />
                 <Route path="projects" element={<Project />} />
                 <Route path="holders" element={<Holder />} />
+                <Route path='patrimony' element={<Patrimony />} />
               </Route>
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="*" element={<Navigate to="history" />} />
             </Routes>
           </HelmetProvider>
         </AuthProvider>

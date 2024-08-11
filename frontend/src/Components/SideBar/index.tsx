@@ -27,6 +27,7 @@ export const Sidebar = () => {
         <SidebarButton name="Histórico" pagePath="/history" isSelected={isSelected("/history")} />
         <SidebarButton name="Projetos" pagePath="/projects" isSelected={isSelected("/projects")} />
         <SidebarButton name="Bolsistas" pagePath="/holders" isSelected={isSelected("/holders")} />
+        <SidebarButton name="Patrimônio" pagePath="/patrimony" isSelected={isSelected("/patrimony")} />
       </VStack>
       <Box
         w="100%"
