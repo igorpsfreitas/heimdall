@@ -105,7 +105,7 @@ const EditPatrimonyModal: React.FC<EditPatrimonyModalProps> = ({ isOpen, onClose
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Editar Patrimônio</ModalHeader>

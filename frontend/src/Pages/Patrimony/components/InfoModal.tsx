@@ -22,7 +22,7 @@ interface InfoModalProps {
 
 const InfoModal: React.FC<InfoModalProps> = ({ isOpen, onClose, description, observation }) => {
 return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent>
             <ModalHeader>Detalhes do Patrimônio</ModalHeader>

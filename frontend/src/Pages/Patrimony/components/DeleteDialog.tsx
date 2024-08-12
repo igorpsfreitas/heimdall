@@ -14,14 +14,14 @@ interface ConfirmDeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  projectName: string;
+  patrimonyName: string;
 }
 
 const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   isOpen,
   onClose,
   onConfirm,
-  projectName,
+  patrimonyName,
 }) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
   const toast = useToast();
@@ -29,7 +29,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   const handleConfirm = () => {
     toast({
       title: "Patrimônio excluído!",
-      description: `O patrimônio "${projectName}" foi excluído com sucesso.`,
+      description: `O patrimônio "${patrimonyName}" foi excluído com sucesso.`,
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -47,6 +47,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={handleCancel}
+      isCentered closeOnEsc={false} closeOnOverlayClick={false}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -55,11 +56,11 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Tem certeza que deseja excluir o patrimônio "{projectName}"? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir o patrimônio "{patrimonyName}"? Esta ação não pode ser desfeita.
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={handleCancel}>
+            <Button ref={cancelRef} colorScheme={'red'} variant={'outline'} onClick={handleCancel}>
               Cancelar
             </Button>
             <Button colorScheme="red" onClick={handleConfirm} ml={3}>

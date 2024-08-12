@@ -256,7 +256,7 @@ export default function Patrimony() {
           isOpen={isOpen}
           onClose={onClose}
           onConfirm={() => handleDelete(selectedPatrimony.id)}
-          projectName={selectedPatrimony.name}
+          patrimonyName={selectedPatrimony.name}
         />
       )}
       <InfoModal

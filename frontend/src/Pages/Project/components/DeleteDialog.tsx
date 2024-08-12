@@ -47,6 +47,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
       isOpen={isOpen}
       leastDestructiveRef={cancelRef}
       onClose={handleCancel}
+      isCentered closeOnEsc={false} closeOnOverlayClick={false}
     >
       <AlertDialogOverlay>
         <AlertDialogContent>
@@ -59,7 +60,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           </AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={handleCancel}>
+            <Button ref={cancelRef} colorScheme={'red'} variant={'outline'} onClick={handleCancel}>
               Cancelar
             </Button>
             <Button colorScheme="red" onClick={handleConfirm} ml={3}>
