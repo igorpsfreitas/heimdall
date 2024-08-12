@@ -124,8 +124,8 @@ export default function Holder() {
         <Flex mb={30} justifyContent="space-between" alignItems="center">
           <Text as="b" fontSize={"40px"} color={"#5923b8"}>BOLSISTAS</Text>
           {username !== 'guest' && (<Button
-            colorScheme="green"
-            rightIcon={<Icon as={AiOutlinePlus} />}
+            colorScheme="blue"
+            leftIcon={<Icon as={AiOutlinePlus} />}
             onClick={onCreateOpen}
           >
             Novo
@@ -187,8 +187,9 @@ export default function Holder() {
                   <Td textAlign="center">{getProjectNameById(holder.project_id)}</Td>
                   {username !== 'guest' && (
                     <>
-                      <Td textAlign="center" w="5%">
+                      <Td textAlign="center" w="5%" padding={0}>
                         <Button
+                          padding={0}
                           variant="ghost"
                           colorScheme="purple"
                           onClick={() => { handleEditDialog(holder); } }
@@ -196,8 +197,9 @@ export default function Holder() {
                           <Icon as={AiOutlineEdit} name="edit" />
                         </Button>
                       </Td>
-                      <Td textAlign="center" w="5%">
+                      <Td textAlign="center" w="5%" padding={0}>
                         <Button
+                          padding={0}
                           variant="ghost"
                           colorScheme="red"
                           onClick={() => handleDeleteDialog(holder)}

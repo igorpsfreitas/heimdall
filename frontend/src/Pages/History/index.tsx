@@ -13,7 +13,7 @@ export default function History() {
         <title>Heimdall - Histórico</title>
       </Helmet>
       <Box>
-        <Text>Home</Text>
+        <Text></Text>
       </Box>
     </>
   );
