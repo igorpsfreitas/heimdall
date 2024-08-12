@@ -122,8 +122,8 @@ export default function Project() {
         <Flex mb={30} justifyContent="space-between" alignItems="center">
           <Text as="b" fontSize={"40px"} color={"#5923b8"}>PROJETOS</Text>
           {username !== 'guest' && (<Button
-            colorScheme="green"
-            rightIcon={<Icon as={AiOutlinePlus} />}
+            colorScheme="blue"
+            leftIcon={<Icon as={AiOutlinePlus} />}
             onClick={onCreateOpen}
           >
             Novo

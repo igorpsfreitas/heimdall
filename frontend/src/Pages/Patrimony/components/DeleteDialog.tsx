@@ -28,8 +28,8 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
   
   const handleConfirm = () => {
     toast({
-      title: "Projeto excluído!",
-      description: `O projeto "${projectName}" foi excluído com sucesso.`,
+      title: "Patrimônio excluído!",
+      description: `O patrimônio "${projectName}" foi excluído com sucesso.`,
       status: "success",
       duration: 3000,
       isClosable: true,
@@ -55,7 +55,7 @@ const ConfirmDeleteDialog: React.FC<ConfirmDeleteDialogProps> = ({
           </AlertDialogHeader>
 
           <AlertDialogBody>
-            Tem certeza que deseja excluir o projeto "{projectName}"? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir o patrimônio "{projectName}"? Esta ação não pode ser desfeita.
           </AlertDialogBody>
 
           <AlertDialogFooter>

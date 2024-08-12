@@ -9,9 +9,9 @@ export type TypePatrimony = {
     observation: string | null,
     status: string,
     holder_id: number | null,
-    project_id: number,
-    created_by: number,
-    updated_by: number,
+    project_id: number | null,
+    created_by: number | string,
+    updated_by: number | string,
 }
 
 export const getPatrimonies= async () => {

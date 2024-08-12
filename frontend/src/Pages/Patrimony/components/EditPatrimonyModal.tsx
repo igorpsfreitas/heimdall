@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -11,34 +11,35 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Textarea,
   useToast,
   Select,
-  Textarea,
 } from '@chakra-ui/react';
-import { TypePatrimony, createPatrimony } from '../../../API/patrimonyServices';
+import { TypePatrimony, updatePatrimony } from '../../../API/patrimonyServices';
 import { TypeProject, getProjects } from '../../../API/projectServices';
 import { TypeHolder, getHolders } from '../../../API/holderServices';
 
-interface CreatePatrimonyModalProps {
+interface EditPatrimonyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (project: TypePatrimony) => void;
+  patrimony: TypePatrimony | null;
+  onSuccess: (patrimony: TypePatrimony) => void;
 }
 
-const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onClose, onSuccess }) => {
+const EditPatrimonyModal: React.FC<EditPatrimonyModalProps> = ({ isOpen, onClose, patrimony, onSuccess }) => {
   const [name, setName] = useState('');
   const [listing_code, setListingCode] = useState('');
-  const [serialNumber, setSerialNumber] = useState('');
+  const [serial_number, setSerialNumber] = useState('');
   const [description, setDescription] = useState('');
   const [observation, setObservation] = useState('');
   const [status, setStatus] = useState<'available' | 'unavailable' | 'dead'>('available');
-  const [created_by, setCreatedBy] = useState(localStorage.getItem('user_id'));
-  const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id'));
+  const [created_by, setCreatedBy] = useState(localStorage.getItem('user_id') || '');
+  const [updated_by, setUpdatedBy] = useState(localStorage.getItem('user_id') || '');
   const [holder_id, setHolderId] = useState<number | null>(null);
   const [project_id, setProjectId] = useState<number | null>(null);
   const [projects, setProjects] = useState<TypeProject[]>([]);
   const [holders, setHolders] = useState<TypeHolder[]>([]);
-  
+
   const toast = useToast();
 
   useEffect(() => {
@@ -51,60 +52,65 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
   }, []);
 
   useEffect(() => {
-    setName('');
-    setListingCode('');
-    setSerialNumber('');
-    setDescription('');
-    setObservation('');
-    setStatus('available');
-    setCreatedBy(localStorage.getItem('user_id'));
-    setUpdatedBy(localStorage.getItem('user_id'));
-    setHolderId(null);
-    setProjectId(null);
-  }, [isOpen]);
+    if (patrimony) {
+      setName(patrimony.name);
+      setListingCode(patrimony.listing_code);
+      setSerialNumber(patrimony.serial_number);
+      setDescription(patrimony.description || '');
+      setObservation(patrimony.observation || '');
+      setStatus(patrimony.status as 'available' | 'unavailable' | 'dead');
+      setCreatedBy(patrimony.created_by?.toString() || localStorage.getItem('user_id') || '0');
+      setUpdatedBy(patrimony.updated_by?.toString() || localStorage.getItem('user_id') || '0');
+      setHolderId(patrimony.holder_id);
+      setProjectId(patrimony.project_id ?? null);
+    }
+  }, [patrimony]);
 
-  const handleSubmit = () => {
-    const newPatrimony = {
-      name,
-      listing_code,
-      serial_number: serialNumber,
-      description,
-      observation,
-      status,
-      holder_id,
-      project_id,
-      created_by,
-      updated_by,
-    };
+  const handleUpdate = () => {
+    if (patrimony) {
+      const updatedPatrimony: TypePatrimony = {
+        ...patrimony,
+        name,
+        listing_code,
+        serial_number,
+        description,
+        observation,
+        status,
+        created_by,
+        updated_by,
+        holder_id,
+        project_id,
+      };
 
-    createPatrimony(newPatrimony).then((response) => {
-      onSuccess(response.data);
-      onClose();
-      toast({
-        title: "Patrimônio criado.",
-        description: "O patrimônio foi criado com sucesso.",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
+      updatePatrimony(updatedPatrimony).then((response) => {
+        onSuccess(response.data);
+        toast({
+          title: "Patrimônio atualizado.",
+          description: "O patrimônio foi atualizado com sucesso.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        onClose();
+      }).catch((error) => {
+        toast({
+          title: "Erro ao atualizar patrimônio.",
+          description: error.message,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
       });
-    }).catch((error) => {
-      toast({
-        title: "Erro.",
-        description: "Houve um erro ao criar o patrimônio.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    });
-  }
+    }
+  };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Adicionar Patrimônio</ModalHeader>
+        <ModalHeader>Editar Patrimônio</ModalHeader>
         <ModalCloseButton />
-        <ModalBody maxHeight="60vh" overflowY={"auto"}>
+        <ModalBody maxHeight="60vh" overflowY="auto">
           <FormControl id="name" isRequired>
             <FormLabel>Nome do Equipamento</FormLabel>
             <Input
@@ -127,7 +133,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
             <FormLabel>Número de Série</FormLabel>
             <Input
               placeholder="Número de Série"
-              value={serialNumber}
+              value={serial_number}
               onChange={(e) => setSerialNumber(e.target.value)}
             />
           </FormControl>
@@ -141,7 +147,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
             />
           </FormControl>
 
-       <FormControl id="observation" mt={4}>
+          <FormControl id="observation" mt={4}>
             <FormLabel>Observação</FormLabel>
             <Textarea
               placeholder="Observação"
@@ -161,6 +167,7 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
               <option value="dead">Baixado</option>
             </Select>
           </FormControl>
+
           <FormControl id="project_id" isRequired mt={4}>
             <FormLabel>Projeto</FormLabel>
             <Select
@@ -195,10 +202,10 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
           <Button
             colorScheme="blue"
             mr={3}
-            onClick={handleSubmit}
+            onClick={handleUpdate}
             isDisabled={!name || !listing_code || !status || !project_id}
-            >
-            Adicionar
+          >
+            Atualizar
           </Button>
           <Button colorScheme={'red'} variant={'outline'} onClick={onClose}>Cancelar</Button>
         </ModalFooter>
@@ -207,4 +214,4 @@ const CreatePatrimonyModal: React.FC<CreatePatrimonyModalProps> = ({ isOpen, onC
   );
 }
 
-export default CreatePatrimonyModal;
+export default EditPatrimonyModal;
