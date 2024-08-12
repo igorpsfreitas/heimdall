@@ -84,7 +84,7 @@ const EditHolderModal: React.FC<EditHolderModalProps> = ({ isOpen, onClose, hold
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Editar Bolsista</ModalHeader>
@@ -150,7 +150,7 @@ const EditHolderModal: React.FC<EditHolderModalProps> = ({ isOpen, onClose, hold
           >
             Atualizar
           </Button>
-          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button colorScheme={'red'} variant={'outline'} onClick={onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -87,7 +87,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ isOpen, onClose
   };
 
 return (
-  <Modal isOpen={isOpen} onClose={onClose}>
+  <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
     <ModalOverlay />
     <ModalContent>
       <ModalHeader>Criar Novo Projeto</ModalHeader>
@@ -142,7 +142,7 @@ return (
         >
           Criar
         </Button>
-        <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+        <Button colorScheme={'red'} variant={'outline'} onClick={onClose}>Cancelar</Button>
       </ModalFooter>
     </ModalContent>
   </Modal>

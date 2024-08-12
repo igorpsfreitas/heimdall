@@ -78,7 +78,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered closeOnEsc={false} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Editar Projeto</ModalHeader>
@@ -119,7 +119,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({ isOpen, onClose, pr
           >
             Atualizar
           </Button>
-          <Button variant="ghost" onClick={onClose}>Cancelar</Button>
+          <Button colorScheme={'red'} variant={'outline'} onClick={onClose}>Cancelar</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
